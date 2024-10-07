@@ -7,6 +7,11 @@ android {
     namespace = "com.example.runapps"
     compileSdk = 34
 
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.runapps"
         minSdk = 29
@@ -45,4 +50,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation ("com.google.android.gms:play-services-maps:19.0.0")
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
+    implementation ("com.google.maps.android:android-maps-utils:2.2.3")
+    implementation ("com.google.maps.android:maps-utils-ktx:3.2.0")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 }
