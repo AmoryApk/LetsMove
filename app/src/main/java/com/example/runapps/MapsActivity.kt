@@ -3,17 +3,12 @@ package com.example.runapps
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.SystemClock
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.example.runapps.databinding.ActivityMapsBinding
-import com.example.runapps.LocationProvider
-import com.example.runapps.PermissionManager
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 
@@ -38,7 +33,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         binding.btnStartStop.setOnClickListener {
-            if (binding.btnStartStop.text == getString(R.string.start_label)) {
+            if (binding.btnStartStop.text == getString(R.string.start_label) && presenter.startTracking()) {
                 startTracking()
                 binding.btnStartStop.setText(R.string.stop_label)
             } else {
@@ -71,13 +66,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun startTracking() {
-        binding.container.txtPace.text = ""
-        binding.container.txtDistance.text = ""
-        binding.container.txtTime.base = SystemClock.elapsedRealtime()
-        binding.container.txtTime.start()
-        map.clear()
-
-        presenter.startTracking()
+        if (presenter.startTracking()) {
+//            binding.container.txtPace.text = ""
+            binding.container.txtDistancePerTime.text = ""
+            binding.container.txtDistance.text = ""
+            binding.container.txtTime.base = SystemClock.elapsedRealtime()
+            binding.container.txtTime.start()
+            map.clear()
+            presenter.startTracking()
+        }
     }
 
     private fun stopTracking() {
@@ -92,7 +89,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(ui.currentLocation, 14f))
         }
         binding.container.txtDistance.text = ui.formattedDistance
-        binding.container.txtPace.text = ui.formattedPace
+        binding.container.txtDistancePerTime.text = ui.formattedDistancePerTime
+//        binding.container.txtPace.text = ui.formattedPace
         drawRoute(ui.userPath)
     }
 
