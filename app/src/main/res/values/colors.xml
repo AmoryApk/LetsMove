@@ -1,0 +1,16 @@
+<resources>
+    <!-- Warna-warna yang sudah ada -->
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <!-- Tambahkan warna card_background -->
+    <color name="card_background">#333333</color>
+    <color name="roundedcard_background">#444444</color>
+
+    <!-- Warna hitam -->
+    <color name="black">#000000</color>
+
+    <!-- Tambahkan warna navigation_item_color -->
+    <color name="navigation_item_color">#FFFFFF</color>
+</resources>
