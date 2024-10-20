@@ -1,60 +1,57 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2021 Razeware LLC
-  ~
-  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
-  ~ of this software and associated documentation files (the "Software"), to deal
-  ~ in the Software without restriction, including without limitation the rights
-  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  ~ copies of the Software, and to permit persons to whom the Software is
-  ~ furnished to do so, subject to the following conditions:
-  ~
-  ~ The above copyright notice and this permission notice shall be included in
-  ~ all copies or substantial portions of the Software.
-  ~
-  ~ Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
-  ~ distribute, sublicense, create a derivative work, and/or sell copies of the
-  ~ Software in any work that is designed, intended, or marketed for pedagogical or
-  ~ instructional purposes related to programming, coding, application development,
-  ~ or information technology.  Permission for such use, copying, modification,
-  ~ merger, publication, distribution, sublicensing, creation of derivative works,
-  ~ or sale is expressly withheld.
-  ~
-  ~ This project and source code may use libraries or frameworks that are
-  ~ released under various Open-Source licenses. Use of those libraries and
-  ~ frameworks are governed by their own individual licenses.
-  ~
-  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-  ~ THE SOFTWARE.
-  -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    tools:context=".MapsActivity">
+<!--    android:orientation="vertical">-->
 
+  <!-- Include layout for indicators -->
   <include
       android:id="@+id/container"
-      layout="@layout/layout_indicators" />
+      layout="@layout/layout_indicators"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent" />
+<!--      layout="@layout/layout_indicators" />-->
 
-  <fragment android:id="@+id/map"
+  <!-- Google Maps fragment -->
+  <fragment
+      android:id="@+id/map"
       android:name="com.google.android.gms.maps.SupportMapFragment"
+      android:layout_width="0dp"
       xmlns:map="http://schemas.android.com/apk/res-auto"
-      android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="1"
-      tools:context=".MapsActivity" />
-
+      app:layout_constraintTop_toBottomOf="@id/container"
+      app:layout_constraintBottom_toTopOf="@+id/btnStartStop"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent" />
+<!--      android:layout_weight="1"-->
+<!--      tools:context=".MapsActivity" />-->
+<!--    android:layout_width="match_parent"-->
+  <!-- Start/Stop button -->
   <Button
       android:id="@+id/btnStartStop"
       style="@style/Widget.AppCompat.Button.Borderless.Colored"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/start_label" />
+      android:text="@string/start_label"
+      app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent" />
 
-</LinearLayout>
+  <!-- Bottom Navigation View -->
+  <com.google.android.material.bottomnavigation.BottomNavigationView
+      android:id="@+id/bottomNavigation"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:background="@color/black"
+      app:itemIconTint="@color/navigation_item_color"
+      app:itemTextColor="@color/navigation_item_color"
+      app:menu="@menu/bottom_navigation_menu"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

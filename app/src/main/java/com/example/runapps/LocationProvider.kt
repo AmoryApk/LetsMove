@@ -53,6 +53,7 @@ class LocationProvider(private val activity: AppCompatActivity) {
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0)
             .setWaitForAccurateLocation(true) // Wait for a more accurate location
             .build()
+
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val location = locationResult.lastLocation

@@ -73,7 +73,7 @@ class MapPresenter(private val activity: AppCompatActivity) {
             startTime = SystemClock.elapsedRealtime()
             val currentUi = ui.value
             ui.value = currentUi?.copy(
-                formattedDistancePerTime = Ui.EMPTY.formattedDistancePerTime,
+                formattedPace = Ui.EMPTY.formattedPace,
                 formattedDistance = Ui.EMPTY.formattedDistance
             )
             return true

@@ -1,6 +1,7 @@
 package com.example.runapps
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.appcompat.app.AppCompatActivity
@@ -11,11 +12,13 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.example.runapps.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.firebase.auth.FirebaseAuth
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+    private lateinit var auth: FirebaseAuth  // Tambahkan deklarasi auth
 
     private val presenter = MapPresenter(this)
 
@@ -27,6 +30,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize FirebaseAuth
+        auth = FirebaseAuth.getInstance()
+
+        // Dapatkan SupportMapFragment dan dapatkan pemberitahuan ketika peta siap digunakan
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -43,6 +50,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         presenter.onViewCreated()
+
+        // Set up Bottom Navigation item selected listener
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    // Handle Home navigation
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    true
+                }
+                R.id.navigation_activity -> {
+                    // Handle Activity navigation
+                    true // Do nothing as we are already in MapsActivity
+                }
+                R.id.navigation_profile -> {
+                    // Handle Profile navigation
+                    startActivity(Intent(this, ProfilePage::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     /**
@@ -67,12 +95,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun startTracking() {
         if (presenter.startTracking()) {
-//            binding.container.txtPace.text = ""
-            binding.container.txtDistancePerTime.text = ""
+            binding.container.txtPace.text = ""
             binding.container.txtDistance.text = ""
             binding.container.txtTime.base = SystemClock.elapsedRealtime()
             binding.container.txtTime.start()
             map.clear()
+
             presenter.startTracking()
         }
     }
@@ -89,6 +117,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(ui.currentLocation, 14f))
         }
         binding.container.txtDistance.text = ui.formattedDistance
+        binding.container.txtPace.text = ui.formattedPace
         binding.container.txtDistancePerTime.text = ui.formattedDistancePerTime
 //        binding.container.txtPace.text = ui.formattedPace
         drawRoute(ui.userPath)

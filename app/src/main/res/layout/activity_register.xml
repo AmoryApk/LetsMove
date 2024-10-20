@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- Icon or Logo -->
+        <ImageView
+            android:id="@+id/iconLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher_foreground"
+            android:contentDescription="App Logo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Title and Instructions -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Now let’s make you a Move Member."
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintTop_toBottomOf="@id/iconLogo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- Email Input Field -->
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:minHeight="48dp"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- First Name and Surname -->
+        <EditText
+            android:id="@+id/firstNameEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="First name"
+            android:minHeight="48dp"
+            app:layout_constraintTop_toBottomOf="@id/emailEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/surnameEditText"
+            android:layout_marginTop="16dp"
+            app:layout_constraintWidth_percent="0.5" /> <!-- Menggunakan 50% dari lebar -->
+
+        <EditText
+            android:id="@+id/surnameEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Surname"
+            android:minHeight="48dp"
+            app:layout_constraintTop_toBottomOf="@id/emailEditText"
+            app:layout_constraintStart_toEndOf="@id/firstNameEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            app:layout_constraintWidth_percent="0.5" /> <!-- Menggunakan 50% dari lebar -->
+
+        <!-- EditText for Password -->
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            app:layout_constraintTop_toBottomOf="@id/surnameEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/togglePasswordVisibility"
+            app:layout_constraintWidth_percent="0.85" /> <!-- Menggunakan 85% lebar -->
+
+        <!-- ImageView for Eye Icon (Hide/Show Password) -->
+        <ImageView
+            android:id="@+id/togglePasswordVisibility"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="8dp"
+            android:src="@drawable/hideeye"
+            app:layout_constraintTop_toTopOf="@id/passwordEditText"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Password Requirements -->
+        <TextView
+            android:id="@+id/passwordRequirements"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Minimum of 8 characters\nUppercase, lowercase letters and one number"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintTop_toBottomOf="@id/passwordEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp" />
+
+        <!-- Date of Birth -->
+        <EditText
+            android:id="@+id/dobEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Date of Birth"
+            android:inputType="none"
+            android:focusable="false"
+            android:clickable="true"
+            android:padding="12dp"
+            app:layout_constraintTop_toBottomOf="@id/passwordRequirements"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Checkboxes -->
+        <CheckBox
+            android:id="@+id/signupForEmails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="Sign up for emails to get updates."
+            app:layout_constraintTop_toBottomOf="@id/dobEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <CheckBox
+            android:id="@+id/agreeToTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="I agree to Move Privacy Policy and Terms of Use."
+            app:layout_constraintTop_toBottomOf="@id/signupForEmails"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp" />
+
+        <!-- Create Account Button -->
+        <Button
+            android:id="@+id/createAccountButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="Create Account"
+            app:layout_constraintTop_toBottomOf="@id/agreeToTerms"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
