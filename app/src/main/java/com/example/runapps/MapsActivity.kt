@@ -19,6 +19,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var auth: FirebaseAuth  // Tambahkan deklarasi auth
+//    test
 
     private val presenter = MapPresenter(this)
 
