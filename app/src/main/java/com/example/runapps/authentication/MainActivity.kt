@@ -1,4 +1,4 @@
-package com.example.runapps
+package com.example.runapps.authentication
 
 import android.content.Intent
 import android.os.Bundle

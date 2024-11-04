@@ -1,4 +1,4 @@
-package com.example.runapps
+package com.example.runapps.authentication
 
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -10,6 +10,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.runapps.HomeActivity
+import com.example.runapps.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException

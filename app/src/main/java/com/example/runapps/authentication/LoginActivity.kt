@@ -1,9 +1,10 @@
-package com.example.runapps
+package com.example.runapps.authentication
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.runapps.HomeActivity
 import com.example.runapps.databinding.ActivityLoginEmailBinding
 import com.example.runapps.databinding.ActivityLoginPasswordBinding
 import com.example.runapps.databinding.ActivityLoginSuccessBinding
