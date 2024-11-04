@@ -1,4 +1,4 @@
-package com.example.runapps
+package com.example.runapps.activity
 
 import android.annotation.SuppressLint
 import android.os.Looper

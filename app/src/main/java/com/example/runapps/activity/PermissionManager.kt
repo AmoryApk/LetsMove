@@ -1,4 +1,4 @@
-package com.example.runapps
+package com.example.runapps.activity
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.ACTIVITY_RECOGNITION
@@ -15,7 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 
 class PermissionManager(activity: AppCompatActivity,
                         private val locationProvider: LocationProvider,
-                        private val stepCounter: StepCounter)  {
+                        private val stepCounter: StepCounter
+)  {
 
 
     private val locationPermissionProvider = activity.registerForActivityResult(

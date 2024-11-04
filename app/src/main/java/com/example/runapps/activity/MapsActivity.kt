@@ -1,10 +1,13 @@
-package com.example.runapps
+package com.example.runapps.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.appcompat.app.AppCompatActivity
+import com.example.runapps.profile.ProfilePage
+import com.example.runapps.R
+import com.example.runapps.dashboard.HomeActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback

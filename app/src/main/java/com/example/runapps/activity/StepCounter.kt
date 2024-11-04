@@ -32,7 +32,7 @@
  * THE SOFTWARE.
  */
 
-package com.example.runapps
+package com.example.runapps.activity
 
 import android.content.Context.SENSOR_SERVICE
 import android.hardware.Sensor

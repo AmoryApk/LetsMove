@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.runapps.R
-import com.example.runapps.RecentActivity
+import com.example.runapps.activity.RecentActivity
 
 class RecentActivityAdapter(private val activityList: List<RecentActivity>) :
     RecyclerView.Adapter<RecentActivityAdapter.RecentActivityViewHolder>() {

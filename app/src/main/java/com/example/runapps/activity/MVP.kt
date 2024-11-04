@@ -1,7 +1,8 @@
-package com.example.runapps
+package com.example.runapps.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
+import com.example.runapps.R
 import com.google.android.gms.maps.model.LatLng
 
 class MapPresenter(private val activity: AppCompatActivity) {

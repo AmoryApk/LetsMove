@@ -3,7 +3,7 @@ package com.example.runapps.authentication
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.runapps.MapsActivity
+import com.example.runapps.activity.MapsActivity
 import com.example.runapps.databinding.ActivitySuccessBinding
 
 class SuccessActivity : AppCompatActivity() {

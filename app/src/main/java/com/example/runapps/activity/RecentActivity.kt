@@ -1,4 +1,4 @@
-package com.example.runapps
+package com.example.runapps.activity
 
 data class RecentActivity(
     val date: String,
