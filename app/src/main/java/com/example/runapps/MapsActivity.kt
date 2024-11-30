@@ -118,8 +118,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         binding.container.txtDistance.text = ui.formattedDistance
         binding.container.txtPace.text = ui.formattedPace
-        binding.container.txtDistancePerTime.text = ui.formattedDistancePerTime
-//        binding.container.txtPace.text = ui.formattedPace
+//        binding.container.txtDistancePerTime.text = ui.formattedDistancePerTime
+        binding.container.txtPace.text = ui.formattedPace
         drawRoute(ui.userPath)
     }
 

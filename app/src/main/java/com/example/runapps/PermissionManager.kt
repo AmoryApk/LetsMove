@@ -34,12 +34,12 @@ class PermissionManager(activity: AppCompatActivity,
         }
     }
 
-    private fun isGpsEnabled(context: Context): Boolean {
+    fun isGpsEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    private fun showGpsDisabledDialog(activity: Activity) {
+    fun showGpsDisabledDialog(activity: Activity) {
         // Create and show a dialog to prompt the user to enable GPS
         // You can use AlertDialog.Builder or a custom dialog
         AlertDialog.Builder(activity)
