@@ -1,5 +1,6 @@
 package com.example.runapps.authentication
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -59,6 +60,12 @@ class LoginActivity : AppCompatActivity() {
     private fun signIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
+                // Simpan status login
+                val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("isLoggedIn", true) // Simpan status login
+                editor.apply()
+
                 // Tampilkan halaman sukses
                 showSuccessScreen()
             } else {
