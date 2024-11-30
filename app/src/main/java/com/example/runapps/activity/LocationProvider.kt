@@ -1,7 +1,8 @@
-package com.example.runapps.activity
+package com.example.runapps
 
 import android.annotation.SuppressLint
 import android.os.Looper
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.LocationCallback
@@ -20,9 +21,11 @@ class LocationProvider(private val activity: AppCompatActivity) {
     private var distance = 0
     val liveLocations = MutableLiveData<List<LatLng>>()
     val liveDistance = MutableLiveData<Int>()
+    val livePace = MutableLiveData<Double>()
     val liveLocation = MutableLiveData<LatLng>()
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
+            Log.d("LocationProvider", "onLocationResult called")
             val currentLocation = result.lastLocation
             val latLng = currentLocation?.let { LatLng(currentLocation.latitude, it.longitude) }
             if (latLng == null) {
@@ -46,6 +49,7 @@ class LocationProvider(private val activity: AppCompatActivity) {
         }
     }
     fun getUserLocation() {
+        Log.d("LocationProvider", "getUserLocation called")
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0)
             .setWaitForAccurateLocation(true) // Wait for a more accurate location
             .build()
@@ -72,6 +76,7 @@ class LocationProvider(private val activity: AppCompatActivity) {
             .build()
         client.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
+
     fun stopTracking() {
         client.removeLocationUpdates(locationCallback)
         locations.clear()

@@ -40,6 +40,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.SensorManager.*
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 
@@ -63,6 +64,7 @@ class StepCounter(private val activity: AppCompatActivity) : SensorEventListener
   private var initialSteps = -1
 
   fun setupStepCounter() {
+    Log.d("StepCounter", "setupStepCounter")
     if (stepCounterSensor != null) {
       sensorManager.registerListener(this, stepCounterSensor, SENSOR_DELAY_FASTEST)
     }
