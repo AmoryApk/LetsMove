@@ -5,8 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.appcompat.app.AppCompatActivity
+import com.example.runapps.MapPresenter
 import com.example.runapps.profile.ProfilePage
 import com.example.runapps.R
+import com.example.runapps.Ui
 import com.example.runapps.dashboard.HomeActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap

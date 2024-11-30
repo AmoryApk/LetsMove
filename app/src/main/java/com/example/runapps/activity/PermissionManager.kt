@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.runapps.LocationProvider
 
 class PermissionManager(activity: AppCompatActivity,
                         private val locationProvider: LocationProvider,

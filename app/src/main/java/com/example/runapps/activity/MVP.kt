@@ -4,6 +4,8 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
+import com.example.runapps.activity.PermissionManager
+import com.example.runapps.activity.StepCounter
 import com.google.android.gms.maps.model.LatLng
 import java.util.Date
 import kotlin.time.Duration.Companion.seconds
