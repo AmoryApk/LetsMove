@@ -1,4 +1,4 @@
-package com.example.runapps
+package com.example.runapps.activity
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.ACTIVITY_RECOGNITION
@@ -12,10 +12,12 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.runapps.LocationProvider
 
 class PermissionManager(activity: AppCompatActivity,
                         private val locationProvider: LocationProvider,
-                        private val stepCounter: StepCounter)  {
+                        private val stepCounter: StepCounter
+)  {
 
 
     private val locationPermissionProvider = activity.registerForActivityResult(
@@ -34,12 +36,12 @@ class PermissionManager(activity: AppCompatActivity,
         }
     }
 
-    private fun isGpsEnabled(context: Context): Boolean {
+    fun isGpsEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    private fun showGpsDisabledDialog(activity: Activity) {
+    fun showGpsDisabledDialog(activity: Activity) {
         // Create and show a dialog to prompt the user to enable GPS
         // You can use AlertDialog.Builder or a custom dialog
         AlertDialog.Builder(activity)
@@ -48,6 +50,7 @@ class PermissionManager(activity: AppCompatActivity,
             .setPositiveButton("Enable") { _, _ ->
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 activity.startActivity(intent)
+                locationProvider.getUserLocation()
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -56,6 +59,7 @@ class PermissionManager(activity: AppCompatActivity,
     private val activityRecognitionPermissionProvider = activity.registerForActivityResult(
         ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
+            Log.d("PermissionManager", "Activity recognition permission granted")
             stepCounter.setupStepCounter()
         }
     }
@@ -66,6 +70,7 @@ class PermissionManager(activity: AppCompatActivity,
 
     fun requestActivityRecognition() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Log.d("PermissionManager", "Requesting activity recognition permission")
             activityRecognitionPermissionProvider.launch(ACTIVITY_RECOGNITION)
         } else {
             stepCounter.setupStepCounter()

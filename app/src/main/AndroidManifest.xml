@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="false"
@@ -25,7 +26,7 @@
                  You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <activity
-            android:name=".MainActivity"
+            android:name=".authentication.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
@@ -35,30 +36,36 @@
         </activity>
 
         <!-- Aktivitas Register -->
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".authentication.RegisterActivity" />
 
         <!-- Aktivitas Login -->
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".authentication.LoginActivity" />
 
         <!-- Aktivitas Home -->
-        <activity android:name=".HomeActivity" />
+        <activity android:name=".dashboard.HomeActivity" />
 
         <!-- Aktivitas Profile Page -->
-        <activity android:name=".ProfilePage" />
+        <activity android:name=".profile.ProfilePage" />
 
         <!-- Aktivitas Maps -->
-        <activity android:name=".MapsActivity" />
+        <activity android:name=".activity.MapsActivity" />
+
+        <activity android:name="com.example.profile.AchievementsActivity" />
+        <activity android:name="com.example.profile.SettingsActivity" />
+        <activity android:name="com.example.profile.AboutUsActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
     </application>
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
-    <uses-feature android:name="android.hardware.location.gps" />
-    <uses-feature android:name="android.hardware.location.network" />
+    <uses-feature android:name="android.hardware.location.gps"/>
+    <uses-feature android:name="android.hardware.location.network"/>
 
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+
 </manifest>

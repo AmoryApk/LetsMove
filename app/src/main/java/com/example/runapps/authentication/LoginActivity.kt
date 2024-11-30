@@ -1,9 +1,11 @@
-package com.example.runapps
+package com.example.runapps.authentication
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.runapps.dashboard.HomeActivity
 import com.example.runapps.databinding.ActivityLoginEmailBinding
 import com.example.runapps.databinding.ActivityLoginPasswordBinding
 import com.example.runapps.databinding.ActivityLoginSuccessBinding
@@ -58,6 +60,12 @@ class LoginActivity : AppCompatActivity() {
     private fun signIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
+                // Simpan status login
+                val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("isLoggedIn", true) // Simpan status login
+                editor.apply()
+
                 // Tampilkan halaman sukses
                 showSuccessScreen()
             } else {
