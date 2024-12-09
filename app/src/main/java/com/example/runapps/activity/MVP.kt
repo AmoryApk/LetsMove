@@ -1,14 +1,14 @@
-package com.example.runapps
+package com.example.runapps.activity
 
 import android.os.SystemClock
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
-import com.example.runapps.activity.PermissionManager
-import com.example.runapps.activity.StepCounter
+import com.example.runapps.R
 import com.google.android.gms.maps.model.LatLng
-import java.util.Date
-import kotlin.time.Duration.Companion.seconds
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class MapPresenter(private val activity: AppCompatActivity) {
 //    var startTime = SystemClock.elapsedRealtime().toInt() / 1000
@@ -22,6 +22,10 @@ class MapPresenter(private val activity: AppCompatActivity) {
     private val stepCounter = StepCounter(activity)
 
     private val permissionsManager = PermissionManager(activity, locationProvider, stepCounter)
+
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+
 
     fun onViewCreated() {
 
@@ -87,6 +91,38 @@ class MapPresenter(private val activity: AppCompatActivity) {
     }
 
     fun stopTracking() {
+        // Get the current user's UID
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            val uiData = ui.value // Get the current UI state
+
+            // Create a TrackingData object with raw values
+            val trackingData = TrackingData(
+                userPath = uiData?.userPath,
+                currentLocation = uiData?.currentLocation,
+                distance = locationProvider.distance, // Get raw distance from LocationProvider
+                step = uiData?.formattedPace?.toIntOrNull() ?: 0,
+                runningTime = SystemClock.elapsedRealtime()
+            )
+            // Create a reference to the user's tracking list
+            val userTrackingListRef = database.reference.child("user_tracking").child(userId).child("trackingData")
+            // Push a new entry to the list
+            userTrackingListRef.push().setValue(trackingData)
+                .addOnSuccessListener {
+                    // Handle success
+                    Log.d("MapPresenter", "Tracking data added to list successfully")
+                    Toast.makeText(activity, "Tracking data saved", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { exception ->
+                    // Handle failure
+                    Log.e("MapPresenter", "Error adding tracking data to list: ${exception.message}", exception)
+                    Toast.makeText(activity, "Error saving tracking data", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            // User is not logged in, handle accordingly (e.g., show a login prompt)
+            Log.w("MapPresenter", "User not logged in, cannot save tracking data")
+            Toast.makeText(activity, "Please log in to save tracking data", Toast.LENGTH_SHORT).show()
+        }
         locationProvider.stopTracking()
         stepCounter.unloadStepCounter()
     }
@@ -111,3 +147,11 @@ data class Ui(
         )
     }
 }
+
+data class TrackingData(
+    val userPath: List<LatLng>? = null,
+    val currentLocation: LatLng? = null,
+    val distance: Int = 0, // Store distance as a Double
+    val step: Int = 0, // Store pace as an Int
+    val runningTime: Long = 0
+)

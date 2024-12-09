@@ -1,4 +1,4 @@
-package com.example.runapps
+package com.example.runapps.activity
 
 import android.annotation.SuppressLint
 import android.os.Looper
@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
 class LocationProvider(private val activity: AppCompatActivity) {
     private val client by lazy { LocationServices.getFusedLocationProviderClient(activity) }
     private val locations = mutableListOf<LatLng>()
-    private var distance = 0
+    var distance = 0
     val liveLocations = MutableLiveData<List<LatLng>>()
     val liveDistance = MutableLiveData<Int>()
     val livePace = MutableLiveData<Double>()
