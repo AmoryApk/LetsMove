@@ -2,6 +2,7 @@ package com.example.runapps.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,11 +11,20 @@ import com.example.runapps.activity.MapsActivity
 import com.example.runapps.profile.ProfilePage
 import com.example.runapps.R
 import com.example.runapps.activity.RecentActivity
+import com.example.runapps.activity.TrackingData
 import com.example.runapps.authentication.RecentActivityAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import kotlin.collections.getValue
 
 class HomeActivity : AppCompatActivity() {
+
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     private lateinit var recentActivityRecyclerView: RecyclerView
     private lateinit var recentActivityAdapter: RecentActivityAdapter
@@ -38,11 +48,16 @@ class HomeActivity : AppCompatActivity() {
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
         // Load initial sample data for recent activities
-        loadSampleData()
+//        loadSampleData()
+        fetchRecentActivityData { recentActivityList ->
+            // Use the recentActivityList here
+            recentActivityAdapter = RecentActivityAdapter(recentActivityList)
+            recentActivityRecyclerView.adapter = recentActivityAdapter
+        }
 
         // Initialize Adapter and set it to RecyclerView
-        recentActivityAdapter = RecentActivityAdapter(recentActivityList)
-        recentActivityRecyclerView.adapter = recentActivityAdapter
+//        recentActivityAdapter = RecentActivityAdapter(recentActivityList)
+//        recentActivityRecyclerView.adapter = recentActivityAdapter
 
         // Set welcome message with user name
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -71,6 +86,44 @@ class HomeActivity : AppCompatActivity() {
                 }
                 else -> false
             }
+        }
+    }
+
+    private fun fetchRecentActivityData(callback: (ArrayList<RecentActivity>) -> Unit) {
+        val userId = auth.currentUser?.uid
+
+        if (userId != null) {
+            val recentActivityRef = database.reference.child("user_tracking").child(userId).child("trackingData")
+
+            recentActivityRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val recentActivityList = ArrayList<RecentActivity>() // Initialize here
+
+                    for (snapshot in dataSnapshot.children) {
+                        val trackingData = snapshot.getValue(TrackingData::class.java)
+                        if (trackingData != null) {
+                            val recentActivity = RecentActivity(
+                                trackingData.runningDate,
+                                trackingData.distance.toString(),
+                                trackingData.step.toString(),
+                                trackingData.pace.toString()
+                            )
+                            recentActivityList.add(recentActivity)
+                        }
+                    }
+
+                    callback(recentActivityList) // Invoke the callback with the list
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle errors
+                    Log.e("HomeActivity", "Error fetching recent activity data: ${databaseError.message}", databaseError.toException())
+                    callback(ArrayList()) // Invoke callback with empty list in case of error
+                }
+            })
+        } else {
+            // User is not logged in, handle accordingly
+            callback(ArrayList()) // Invoke callback with empty list if user is not logged in
         }
     }
 

@@ -9,6 +9,8 @@ import com.example.runapps.R
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import java.time.LocalDate
+import java.util.Date
 
 class MapPresenter(private val activity: AppCompatActivity) {
 //    var startTime = SystemClock.elapsedRealtime().toInt() / 1000
@@ -98,11 +100,12 @@ class MapPresenter(private val activity: AppCompatActivity) {
 
             // Create a TrackingData object with raw values
             val trackingData = TrackingData(
-                userPath = uiData?.userPath,
-                currentLocation = uiData?.currentLocation,
+//                userPath = uiData?.userPath?.map { LatLng(it.latitude, it.longitude) } ?: emptyList(),
+//                currentLocation = uiData?.currentLocation,
                 distance = locationProvider.distance, // Get raw distance from LocationProvider
                 step = uiData?.formattedPace?.toIntOrNull() ?: 0,
-                runningTime = SystemClock.elapsedRealtime()
+                runningTime = SystemClock.elapsedRealtime(),
+                runningDate = LocalDate.now().toString()
             )
             // Create a reference to the user's tracking list
             val userTrackingListRef = database.reference.child("user_tracking").child(userId).child("trackingData")
@@ -147,11 +150,3 @@ data class Ui(
         )
     }
 }
-
-data class TrackingData(
-    val userPath: List<LatLng>? = null,
-    val currentLocation: LatLng? = null,
-    val distance: Int = 0, // Store distance as a Double
-    val step: Int = 0, // Store pace as an Int
-    val runningTime: Long = 0
-)
