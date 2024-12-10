@@ -22,7 +22,7 @@ class RecentActivityAdapter(private val activityList: List<RecentActivity>) :
         val currentItem = activityList[position]
         holder.dateTextView.text = currentItem.date
         holder.distanceTextView.text = currentItem.distance
-        holder.detailsTextView.text = "${currentItem.calories} kcal   ${currentItem.speed} km/hr"
+        holder.detailsTextView.text = "${currentItem.calories} kcal   ${currentItem.speed} km/hr   ${currentItem.steps} steps"
     }
 
     override fun getItemCount() = activityList.size

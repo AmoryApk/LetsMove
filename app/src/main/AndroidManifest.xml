@@ -50,9 +50,9 @@
         <!-- Aktivitas Maps -->
         <activity android:name=".activity.MapsActivity" />
 
-        <activity android:name="com.example.profile.AchievementsActivity" />
-        <activity android:name="com.example.profile.SettingsActivity" />
-        <activity android:name="com.example.profile.AboutUsActivity" />
+        <activity android:name=".profile.AchievementsActivity" />
+        <activity android:name=".profile.SettingsActivity" />
+        <activity android:name=".profile.AboutUsActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
