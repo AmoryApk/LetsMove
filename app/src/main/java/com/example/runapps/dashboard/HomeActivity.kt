@@ -3,6 +3,7 @@ package com.example.runapps.dashboard
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,8 @@ import com.example.runapps.starter.StarterService.calculatePace
 import com.example.runapps.starter.StarterService.convertMeterToKm
 import com.example.runapps.starter.StarterService.convertSecondToHour
 import com.example.runapps.starter.StarterService.formatDateToReadable
+import com.example.runapps.starter.StarterService.loadProfileImage
+import com.example.runapps.starter.StarterService.loadProfileName
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -38,6 +41,7 @@ class HomeActivity : AppCompatActivity() {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val currentUser = FirebaseAuth.getInstance().currentUser
 
     private lateinit var recentActivityRecyclerView: RecyclerView
     private lateinit var recentActivityAdapter: RecentActivityAdapter
@@ -49,6 +53,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var weeklyGoalProgressText: TextView
     private lateinit var weeklyGoalLeftText: TextView
     private lateinit var progressBar: ProgressBar
+    private lateinit var profileImage: ImageView // Declare the ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,9 @@ class HomeActivity : AppCompatActivity() {
         weeklyGoalProgressText = findViewById(R.id.weeklyGoalProgressText)
         weeklyGoalLeftText = findViewById(R.id.weeklyGoalLeftText)
         progressBar = findViewById(R.id.myProgressBar)
+        profileImage = findViewById(R.id.profileImage)
+
+        loadProfileImage(profileImage)
 
         // Initialize RecyclerView
         recentActivityRecyclerView = findViewById(R.id.recentActivityRecyclerView)
@@ -82,11 +90,9 @@ class HomeActivity : AppCompatActivity() {
 //        recentActivityRecyclerView.adapter = recentActivityAdapter
 
         // Set welcome message with user name
-        val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
-            val email = currentUser.email
-            val userName = email?.substringBefore("@") // Extracting name from email
-            welcomeTextView.text = "Hello, $userName" // Set the welcome message
+            var username = loadProfileName(welcomeTextView)
+            welcomeTextView.text = "Hello, $username" // Set the welcome message
         }
 
         // Set up Bottom Navigation item selected listener
