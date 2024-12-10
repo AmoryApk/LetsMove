@@ -32,6 +32,8 @@ import com.google.firebase.database.ValueEventListener
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.text.DecimalFormat
+import kotlin.text.format
 
 class ProfilePage : AppCompatActivity() {
 
@@ -221,34 +223,54 @@ class ProfilePage : AppCompatActivity() {
             val recentActivityRef = database.reference.child("user_tracking").child(userId).child("trackingData")
             recentActivityRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    var totalTime = 0.0
-                    var totalDistance = 0.0
-                    var totalCalories = 0.0
-
-                    for (snapshot in dataSnapshot.children) {
-                        val trackingData = snapshot.getValue(TrackingData::class.java)
-                        val distance = convertMeterToKm(trackingData?.distance?.toDouble() ?: 0.0)
-                        val calories = calculateCalories(trackingData?.distance?.toDouble() ?: 0.0, trackingData?.pace?.toDouble() ?: 0.0)
-                        val time = convertSecondToHour(trackingData?.runningTime?.toDouble() ?: 0.0)
-
-                        if (trackingData != null) {
-                            totalTime += time
-                            totalDistance += distance
-                            totalCalories += calories
-                        }
-                    }
-
-                    timeText.text = String.format("%.3f", totalTime) + " Hour"
-                    distanceText.text = String.format("%.3f", totalDistance) + " Km"
-                    caloriesText.text = String.format("%.3f", totalCalories) + " Kcal"
+                    val totals = calculateTotals(dataSnapshot)
+                    updateUI(totals)
                 }
+
                 override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle errors
-                    Log.e("HomeActivity", "Error fetching recent activity data: ${databaseError.message}", databaseError.toException())
+                    handleFetchError(databaseError)
                 }
             })
         } else {
-            // User is not logged in, handle accordingly
+            handleUserNotLoggedIn()
         }
     }
+
+    private fun calculateTotals(dataSnapshot: DataSnapshot): Totals {
+        var totalTime = 0.0
+        var totalDistance = 0.0
+        var totalCalories = 0.0
+
+        for (snapshot in dataSnapshot.children) {
+            val trackingData = snapshot.getValue(TrackingData::class.java)
+            if (trackingData != null) {
+                val distance = convertMeterToKm(trackingData.distance.toDouble())
+                val calories = calculateCalories(trackingData.distance.toDouble(), trackingData.pace.toDouble())
+                val time = convertSecondToHour(trackingData.runningTime.toDouble())
+
+                totalTime += time
+                totalDistance += distance
+                totalCalories += calories
+            }
+        }
+
+        return Totals(totalTime, totalDistance, totalCalories)
+    }
+
+    private fun updateUI(totals: Totals) {
+        val decimalFormat = DecimalFormat("0.##")
+        timeText.text = decimalFormat.format(totals.time) + " Hour"
+        distanceText.text = decimalFormat.format(totals.distance) + " Km"
+        caloriesText.text = decimalFormat.format(totals.calories) + " Kcal"
+    }
+
+    private fun handleFetchError(databaseError: DatabaseError) {
+        Log.e("HomeActivity", "Error fetching recent activity data: ${databaseError.message}", databaseError.toException())
+    }
+
+    private fun handleUserNotLoggedIn() {
+        // User is not logged in, handle accordingly
+    }
+
+    data class Totals(val time: Double, val distance: Double, val calories: Double)
 }

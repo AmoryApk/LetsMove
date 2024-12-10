@@ -3,6 +3,7 @@ package com.example.runapps.dashboard
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.collections.getValue
 import kotlin.text.format
+import java.text.DecimalFormat
 
 class HomeActivity : AppCompatActivity() {
 
@@ -43,12 +45,21 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var welcomeTextView: TextView // Declare the TextView for welcome message
 
+    private lateinit var weeklyGoalText: TextView
+    private lateinit var weeklyGoalProgressText: TextView
+    private lateinit var weeklyGoalLeftText: TextView
+    private lateinit var progressBar: ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         // Initialize views
         welcomeTextView = findViewById(R.id.welcomeTextView) // Initialize the TextView
+        weeklyGoalText = findViewById(R.id.weeklyGoalText)
+        weeklyGoalProgressText = findViewById(R.id.weeklyGoalProgressText)
+        weeklyGoalLeftText = findViewById(R.id.weeklyGoalLeftText)
+        progressBar = findViewById(R.id.myProgressBar)
 
         // Initialize RecyclerView
         recentActivityRecyclerView = findViewById(R.id.recentActivityRecyclerView)
@@ -102,44 +113,86 @@ class HomeActivity : AppCompatActivity() {
 
     private fun fetchRecentActivityData(callback: (ArrayList<RecentActivity>) -> Unit) {
         val userId = auth.currentUser?.uid
-
         if (userId != null) {
             val recentActivityRef = database.reference.child("user_tracking").child(userId).child("trackingData")
-
             recentActivityRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val recentActivityList = ArrayList<RecentActivity>() // Initialize here
-
-                    for (snapshot in dataSnapshot.children) {
-                        val trackingData = snapshot.getValue(TrackingData::class.java)
-                        val distance = convertMeterToKm(trackingData?.distance?.toDouble() ?: 0.0)
-                        val calories = calculateCalories(trackingData?.distance?.toDouble() ?: 0.0, trackingData?.pace?.toDouble() ?: 0.0)
-                        val pace = calculatePace(distance, convertSecondToHour(trackingData?.runningTime?.toDouble() ?: 0.0))
-
-                        if (trackingData != null) {
-                            val recentActivity = RecentActivity(
-                                formatDateToReadable(trackingData.runningDate),
-                                String.format("%.3f", distance) + " Km",
-                                String.format("%.3f", calories),
-                                String.format("%.3f", pace)
-                            )
-                            recentActivityList.add(recentActivity)
-                        }
-                    }
-
-                    callback(recentActivityList) // Invoke the callback with the list
+                    val recentActivityList = fetchRecentActivities(dataSnapshot)
+                    updateWeeklyGoalProgress(recentActivityList)
+                    callback(recentActivityList)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle errors
-                    Log.e("HomeActivity", "Error fetching recent activity data: ${databaseError.message}", databaseError.toException())
-                    callback(ArrayList()) // Invoke callback with empty list in case of error
+                    handleFetchError(databaseError, callback)
                 }
             })
         } else {
-            // User is not logged in, handle accordingly
-            callback(ArrayList()) // Invoke callback with empty list if user is not logged in
+            handleUserNotLoggedIn(callback)
         }
+    }
+
+    private fun fetchRecentActivities(dataSnapshot: DataSnapshot): ArrayList<RecentActivity> {
+        val recentActivityList = ArrayList<RecentActivity>()
+        var totalDistance = 0.0
+        val totalTarget = convertMeterToKm(5000.0)
+
+        for (snapshot in dataSnapshot.children) {
+            val trackingData = snapshot.getValue(TrackingData::class.java)
+            if (trackingData != null) {
+                val distance = convertMeterToKm(trackingData.distance.toDouble())
+                val calories = calculateCalories(trackingData.distance.toDouble(), trackingData.pace.toDouble())
+                val pace = calculatePace(distance, convertSecondToHour(trackingData.runningTime.toDouble()))
+
+                val recentActivity = createRecentActivity(trackingData, distance, calories, pace)
+                recentActivityList.add(recentActivity)
+
+                totalDistance += distance
+            }
+        }
+
+        return recentActivityList
+    }
+
+    private fun createRecentActivity(trackingData: TrackingData, distance: Double, calories: Double, pace: Double): RecentActivity {
+        val decimalFormat = DecimalFormat("0.###")
+        val distanceFormatted = decimalFormat.format(distance)
+        val caloriesFormatted = decimalFormat.format(calories)
+        val paceFormatted = decimalFormat.format(pace)
+
+        return RecentActivity(
+            formatDateToReadable(trackingData.runningDate),
+            distanceFormatted + " Km",
+            caloriesFormatted,
+            paceFormatted,
+            trackingData.step.toString()
+        )
+    }
+
+    private fun updateWeeklyGoalProgress(recentActivityList: ArrayList<RecentActivity>) {
+        var totalDistance = 0.0
+        val totalTarget = convertMeterToKm(5000.0)
+
+        for (activity in recentActivityList) {
+            val distance = activity.distance.replace(" Km", "").toDouble()
+            totalDistance += distance
+        }
+
+        val remainingDistance = totalTarget - totalDistance
+        val progressPercentage = ((totalDistance / totalTarget) * 100).toInt()
+
+        progressBar.progress = progressPercentage
+        weeklyGoalText.text = DecimalFormat("0.###").format(totalTarget) + " Km"
+        weeklyGoalProgressText.text = DecimalFormat("0.###").format(totalDistance) + " Km"
+        weeklyGoalLeftText.text = DecimalFormat("0.###").format(remainingDistance) + " Km"
+    }
+
+    private fun handleFetchError(databaseError: DatabaseError, callback: (ArrayList<RecentActivity>) -> Unit) {
+        Log.e("HomeActivity", "Error fetching recent activity data: ${databaseError.message}", databaseError.toException())
+        callback(ArrayList())
+    }
+
+    private fun handleUserNotLoggedIn(callback: (ArrayList<RecentActivity>) -> Unit) {
+        callback(ArrayList())
     }
 
     // Method to load sample data
