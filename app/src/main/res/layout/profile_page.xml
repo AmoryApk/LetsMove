@@ -114,6 +114,7 @@
                             android:src="@drawable/ic_distance" />
 
                         <TextView
+                            android:id="@+id/distanceText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -136,6 +137,7 @@
                             android:src="@drawable/ic_time" />
 
                         <TextView
+                            android:id="@+id/timeText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -158,10 +160,10 @@
                             android:src="@drawable/ic_calories" />
 
                         <TextView
+                            android:id="@+id/caloriesText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="1,5k kcal"
                             android:textColor="#000"
                             android:textSize="14sp" />
                     </LinearLayout>

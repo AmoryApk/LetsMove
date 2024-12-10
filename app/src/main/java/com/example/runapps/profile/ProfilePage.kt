@@ -11,6 +11,7 @@ import android.graphics.BitmapShader
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,10 +19,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.runapps.R
 import com.example.runapps.activity.MapsActivity
 import com.example.runapps.dashboard.HomeActivity
-import com.example.profile.AboutUsActivity
-import com.example.profile.AchievementsActivity
-import com.example.profile.SettingsActivity
+import com.example.runapps.activity.TrackingData
+import com.example.runapps.starter.StarterService.calculateCalories
+import com.example.runapps.starter.StarterService.convertMeterToKm
+import com.example.runapps.starter.StarterService.convertSecondToHour
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -32,9 +39,15 @@ class ProfilePage : AppCompatActivity() {
         private const val REQUEST_CODE_PICK_IMAGE = 100
     }
 
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var profileName: TextView
     private lateinit var profileImage: ImageView
+    private lateinit var timeText: TextView
+    private lateinit var distanceText: TextView
+    private lateinit var caloriesText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +57,11 @@ class ProfilePage : AppCompatActivity() {
         bottomNavigation = findViewById(R.id.bottomNavigation)
         profileName = findViewById(R.id.profileName)
         profileImage = findViewById(R.id.profileImage)
+        timeText = findViewById(R.id.timeText)
+        distanceText = findViewById(R.id.distanceText)
+        caloriesText = findViewById(R.id.caloriesText)
 
+        fetchRecentActivityData()
         // Muat nama profil
         loadProfileName()
 
@@ -196,5 +213,42 @@ class ProfilePage : AppCompatActivity() {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
         )
+    }
+
+    private fun fetchRecentActivityData() {
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            val recentActivityRef = database.reference.child("user_tracking").child(userId).child("trackingData")
+            recentActivityRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    var totalTime = 0.0
+                    var totalDistance = 0.0
+                    var totalCalories = 0.0
+
+                    for (snapshot in dataSnapshot.children) {
+                        val trackingData = snapshot.getValue(TrackingData::class.java)
+                        val distance = convertMeterToKm(trackingData?.distance?.toDouble() ?: 0.0)
+                        val calories = calculateCalories(trackingData?.distance?.toDouble() ?: 0.0, trackingData?.pace?.toDouble() ?: 0.0)
+                        val time = convertSecondToHour(trackingData?.runningTime?.toDouble() ?: 0.0)
+
+                        if (trackingData != null) {
+                            totalTime += time
+                            totalDistance += distance
+                            totalCalories += calories
+                        }
+                    }
+
+                    timeText.text = String.format("%.3f", totalTime) + " Hour"
+                    distanceText.text = String.format("%.3f", totalDistance) + " Km"
+                    caloriesText.text = String.format("%.3f", totalCalories) + " Kcal"
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle errors
+                    Log.e("HomeActivity", "Error fetching recent activity data: ${databaseError.message}", databaseError.toException())
+                }
+            })
+        } else {
+            // User is not logged in, handle accordingly
+        }
     }
 }

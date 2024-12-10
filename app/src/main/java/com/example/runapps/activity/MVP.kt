@@ -53,7 +53,6 @@ class MapPresenter(private val activity: AppCompatActivity) {
             Log.d("Location", "elapsedTimeInSeconds: $elapsedTimeInSeconds")
             Log.d("Location", "distance: $distance")
             Log.d("Location", "startTime: $startTime")
-            Log.d("Location", "elapsedTimeInSeconds: $elapsedTimeInSeconds")
             val metersPerSecond = if (elapsedTimeInSeconds > 0) distance / elapsedTimeInSeconds else 0
             Log.d("Location", "metersPerSecond: $metersPerSecond")
             val formattedDistancePerTime = activity.getString(R.string.distance_per_time_value, metersPerSecond)
@@ -104,7 +103,7 @@ class MapPresenter(private val activity: AppCompatActivity) {
 //                currentLocation = uiData?.currentLocation,
                 distance = locationProvider.distance, // Get raw distance from LocationProvider
                 step = uiData?.formattedPace?.toIntOrNull() ?: 0,
-                runningTime = SystemClock.elapsedRealtime(),
+                runningTime = ((SystemClock.elapsedRealtime() - startTime) / 1000),
                 runningDate = LocalDate.now().toString()
             )
             // Create a reference to the user's tracking list

@@ -1,4 +1,4 @@
-package com.example.profile
+package com.example.runapps.profile
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

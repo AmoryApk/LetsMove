@@ -13,13 +13,24 @@ import com.example.runapps.R
 import com.example.runapps.activity.RecentActivity
 import com.example.runapps.activity.TrackingData
 import com.example.runapps.authentication.RecentActivityAdapter
+import com.example.runapps.starter.StarterService
+import com.example.runapps.starter.StarterService.calculateCalories
+import com.example.runapps.starter.StarterService.calculatePace
+import com.example.runapps.starter.StarterService.convertMeterToKm
+import com.example.runapps.starter.StarterService.convertSecondToHour
+import com.example.runapps.starter.StarterService.formatDateToReadable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.collections.getValue
+import kotlin.text.format
 
 class HomeActivity : AppCompatActivity() {
 
@@ -101,12 +112,16 @@ class HomeActivity : AppCompatActivity() {
 
                     for (snapshot in dataSnapshot.children) {
                         val trackingData = snapshot.getValue(TrackingData::class.java)
+                        val distance = convertMeterToKm(trackingData?.distance?.toDouble() ?: 0.0)
+                        val calories = calculateCalories(trackingData?.distance?.toDouble() ?: 0.0, trackingData?.pace?.toDouble() ?: 0.0)
+                        val pace = calculatePace(distance, convertSecondToHour(trackingData?.runningTime?.toDouble() ?: 0.0))
+
                         if (trackingData != null) {
                             val recentActivity = RecentActivity(
-                                trackingData.runningDate,
-                                trackingData.distance.toString(),
-                                trackingData.step.toString(),
-                                trackingData.pace.toString()
+                                formatDateToReadable(trackingData.runningDate),
+                                String.format("%.3f", distance) + " Km",
+                                String.format("%.3f", calories),
+                                String.format("%.3f", pace)
                             )
                             recentActivityList.add(recentActivity)
                         }
@@ -128,11 +143,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     // Method to load sample data
-    private fun loadSampleData() {
-        recentActivityList = arrayListOf(
-            RecentActivity("September 19", "10,12 km", "701", "11,2"),
-            RecentActivity("September 18", "9,89 km", "669", "10,8"),
-            RecentActivity("September 16", "9,12 km", "608", "10,1")
-        )
-    }
+//    private fun loadSampleData() {
+//        recentActivityList = arrayListOf(
+//            RecentActivity("September 19", "10,12 km", "701", "11,2"),
+//            RecentActivity("September 18", "9,89 km", "669", "10,8"),
+//            RecentActivity("September 16", "9,12 km", "608", "10,1")
+//        )
+//    }
+
+
+
 }
