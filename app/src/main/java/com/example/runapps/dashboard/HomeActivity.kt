@@ -179,26 +179,12 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateWeeklyGoalProgress(recentActivityList: ArrayList<RecentActivity>) {
-        val sharedPreferences = getSharedPreferences("app_preferences", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-
+        var totalDistance = 0.0
+        val totalTarget = 5000.0
         val today = Calendar.getInstance().time
         val todayCalendar = Calendar.getInstance()
         todayCalendar.time = today
         val todayDayOfWeek = todayCalendar.get(Calendar.DAY_OF_WEEK)
-
-        // Check if today is Monday
-        if (todayDayOfWeek == Calendar.MONDAY) {
-            // Reset total distance to 0
-            editor.putFloat("total_distance", 0.0f)
-            editor.apply()
-        }
-
-        // Get the total distance from SharedPreferences
-        var totalDistance = sharedPreferences.getFloat("total_distance", 0.0f)
-
-        val totalTarget = 5000.0
-
         // Filter out activities that are older than the current week
         val filteredActivities = recentActivityList.filter { activity ->
             val activityDateString = activity.runningDate
@@ -211,18 +197,15 @@ class HomeActivity : AppCompatActivity() {
         }
         for (activity in filteredActivities) {
             val distance = activity.distance.replace(" Km", "").toDouble()
-            totalDistance += distance.toFloat()
+            totalDistance += distance
         }
-        editor.putFloat("total_distance", totalDistance)
-        editor.apply()
 
-        val remainingDistance = convertMeterToKm(totalTarget) - totalDistance.toDouble()
-        Log.d("HomeActivity", "Remaining Distance: $remainingDistance")
-        val progressPercentage = ((totalDistance.toDouble() / totalTarget) * 100).toInt()
-        Log.d("HomeActivity", "Progress Percentage: $progressPercentage")
+        val remainingDistance = convertMeterToKm(totalTarget) - totalDistance
+        val progressPercentage = ((totalDistance / totalTarget) * 100).toInt()
+
         progressBar.progress = progressPercentage
         weeklyGoalText.text = DecimalFormat("0.###").format(convertMeterToKm(totalTarget)) + " Km"
-        weeklyGoalProgressText.text = DecimalFormat("0.###").format(totalDistance.toDouble()) + " Km"
+        weeklyGoalProgressText.text = DecimalFormat("0.###").format(totalDistance) + " Km"
         weeklyGoalLeftText.text = DecimalFormat("0.###").format(remainingDistance) + " Km"
     }
 
