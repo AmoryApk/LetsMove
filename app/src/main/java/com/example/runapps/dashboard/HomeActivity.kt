@@ -197,7 +197,7 @@ class HomeActivity : AppCompatActivity() {
         // Get the total distance from SharedPreferences
         var totalDistance = sharedPreferences.getFloat("total_distance", 0.0f)
 
-        val totalTarget = convertMeterToKm(5000.0)
+        val totalTarget = 5000.0
 
         // Filter out activities that are older than the current week
         val filteredActivities = recentActivityList.filter { activity ->
@@ -216,10 +216,12 @@ class HomeActivity : AppCompatActivity() {
         editor.putFloat("total_distance", totalDistance)
         editor.apply()
 
-        val remainingDistance = totalTarget - totalDistance.toDouble()
+        val remainingDistance = convertMeterToKm(totalTarget) - totalDistance.toDouble()
+        Log.d("HomeActivity", "Remaining Distance: $remainingDistance")
         val progressPercentage = ((totalDistance.toDouble() / totalTarget) * 100).toInt()
+        Log.d("HomeActivity", "Progress Percentage: $progressPercentage")
         progressBar.progress = progressPercentage
-        weeklyGoalText.text = DecimalFormat("0.###").format(totalTarget) + " Km"
+        weeklyGoalText.text = DecimalFormat("0.###").format(convertMeterToKm(totalTarget)) + " Km"
         weeklyGoalProgressText.text = DecimalFormat("0.###").format(totalDistance.toDouble()) + " Km"
         weeklyGoalLeftText.text = DecimalFormat("0.###").format(remainingDistance) + " Km"
     }
