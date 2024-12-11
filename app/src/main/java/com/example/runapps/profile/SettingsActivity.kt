@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.runapps.R
 import com.example.runapps.authentication.LoginActivity
+import com.example.runapps.authentication.MainActivity
+import com.example.runapps.authentication.RegisterActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
@@ -89,10 +91,19 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun logoutUser() {
+        // Hapus data profil
         val sharedPreferences = getSharedPreferences("ProfilePrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.clear()
         editor.apply()
+
+        // Set isLoggedIn menjadi false
+        val userPrefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val userEditor = userPrefs.edit()
+        userEditor.putBoolean("isLoggedIn", false) // Logout user
+        userEditor.apply()
+
+        // Tampilkan pesan logout
         showLogoutMessage()
         redirectToIntroPage()
     }
@@ -102,7 +113,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun redirectToIntroPage() {
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
