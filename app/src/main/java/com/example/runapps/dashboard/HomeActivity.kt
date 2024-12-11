@@ -36,6 +36,9 @@ import java.util.Locale
 import kotlin.collections.getValue
 import kotlin.text.format
 import java.text.DecimalFormat
+import java.time.ZoneId
+import java.util.Calendar
+import java.util.Date
 
 class HomeActivity : AppCompatActivity() {
 
@@ -166,6 +169,7 @@ class HomeActivity : AppCompatActivity() {
         val paceFormatted = decimalFormat.format(pace)
 
         return RecentActivity(
+            trackingData.runningDate,
             formatDateToReadable(trackingData.runningDate),
             distanceFormatted + " Km",
             caloriesFormatted,
@@ -175,20 +179,48 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateWeeklyGoalProgress(recentActivityList: ArrayList<RecentActivity>) {
-        var totalDistance = 0.0
-        val totalTarget = convertMeterToKm(5000.0)
+        val sharedPreferences = getSharedPreferences("app_preferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
 
-        for (activity in recentActivityList) {
-            val distance = activity.distance.replace(" Km", "").toDouble()
-            totalDistance += distance
+        val today = Calendar.getInstance().time
+        val todayCalendar = Calendar.getInstance()
+        todayCalendar.time = today
+        val todayDayOfWeek = todayCalendar.get(Calendar.DAY_OF_WEEK)
+
+        // Check if today is Monday
+        if (todayDayOfWeek == Calendar.MONDAY) {
+            // Reset total distance to 0
+            editor.putFloat("total_distance", 0.0f)
+            editor.apply()
         }
 
-        val remainingDistance = totalTarget - totalDistance
-        val progressPercentage = ((totalDistance / totalTarget) * 100).toInt()
+        // Get the total distance from SharedPreferences
+        var totalDistance = sharedPreferences.getFloat("total_distance", 0.0f)
 
+        val totalTarget = convertMeterToKm(5000.0)
+
+        // Filter out activities that are older than the current week
+        val filteredActivities = recentActivityList.filter { activity ->
+            val activityDateString = activity.runningDate
+            val activityDate = LocalDate.parse(activityDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            val activityCalendar = Calendar.getInstance()
+            activityCalendar.time = Date.from(activityDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+            val activityDayOfWeek = activityCalendar.get(Calendar.DAY_OF_WEEK)
+            val daysBetween = todayDayOfWeek - activityDayOfWeek
+            daysBetween <= 7 // Only include activities from the current week
+        }
+        for (activity in filteredActivities) {
+            val distance = activity.distance.replace(" Km", "").toDouble()
+            totalDistance += distance.toFloat()
+        }
+        editor.putFloat("total_distance", totalDistance)
+        editor.apply()
+
+        val remainingDistance = totalTarget - totalDistance.toDouble()
+        val progressPercentage = ((totalDistance.toDouble() / totalTarget) * 100).toInt()
         progressBar.progress = progressPercentage
         weeklyGoalText.text = DecimalFormat("0.###").format(totalTarget) + " Km"
-        weeklyGoalProgressText.text = DecimalFormat("0.###").format(totalDistance) + " Km"
+        weeklyGoalProgressText.text = DecimalFormat("0.###").format(totalDistance.toDouble()) + " Km"
         weeklyGoalLeftText.text = DecimalFormat("0.###").format(remainingDistance) + " Km"
     }
 
@@ -200,15 +232,6 @@ class HomeActivity : AppCompatActivity() {
     private fun handleUserNotLoggedIn(callback: (ArrayList<RecentActivity>) -> Unit) {
         callback(ArrayList())
     }
-
-    // Method to load sample data
-//    private fun loadSampleData() {
-//        recentActivityList = arrayListOf(
-//            RecentActivity("September 19", "10,12 km", "701", "11,2"),
-//            RecentActivity("September 18", "9,89 km", "669", "10,8"),
-//            RecentActivity("September 16", "9,12 km", "608", "10,1")
-//        )
-//    }
 
 
 
