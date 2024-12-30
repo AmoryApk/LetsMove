@@ -179,30 +179,58 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateWeeklyGoalProgress(recentActivityList: ArrayList<RecentActivity>) {
-        var totalDistance = 0.0
-        val totalTarget = 5000.0
-        val today = Calendar.getInstance().time
-        val todayCalendar = Calendar.getInstance()
-        todayCalendar.time = today
-        val todayDayOfWeek = todayCalendar.get(Calendar.DAY_OF_WEEK)
-        // Filter out activities that are older than the current week
+        val sharedPreferences = getSharedPreferences("app_preferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        val today = Calendar.getInstance()
+        val todayTime = today.time
+        val todayDayOfWeek = today.get(Calendar.DAY_OF_WEEK)
+        val firstDayOfWeek = Calendar.MONDAY
+
+        // Get the last Monday's date
+        val lastMonday = sharedPreferences.getLong("last_monday", 0)
+
+        // Calculate the current Monday's date
+        val currentMonday = today.timeInMillis - ((todayDayOfWeek - firstDayOfWeek + 7) % 7) * 86400000
+
+        // Check if the week has changed
+        if (lastMonday != currentMonday) {
+            // Reset totalDistance to 0
+            editor.putFloat("total_distance", 0.0f)
+            editor.putLong("last_monday", currentMonday)
+            editor.apply()
+        }
+
+        // Calculate the date 7 days ago
+        val sevenDaysAgo = Calendar.getInstance()
+        sevenDaysAgo.add(Calendar.DAY_OF_YEAR, -7)
+
+        // Filter out activities that are older than 7 days
         val filteredActivities = recentActivityList.filter { activity ->
             val activityDateString = activity.runningDate
             val activityDate = LocalDate.parse(activityDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             val activityCalendar = Calendar.getInstance()
             activityCalendar.time = Date.from(activityDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
-            val activityDayOfWeek = activityCalendar.get(Calendar.DAY_OF_WEEK)
-            val daysBetween = todayDayOfWeek - activityDayOfWeek
-            daysBetween <= 7 // Only include activities from the current week
+            activityCalendar.after(sevenDaysAgo)
         }
+
+        // Calculate the total distance for the last 7 days
+        var totalDistance = 0.0f
         for (activity in filteredActivities) {
             val distance = activity.distance.replace(" Km", "").toDouble()
-            totalDistance += distance
+            totalDistance += distance.toFloat()
         }
 
-        val remainingDistance = convertMeterToKm(totalTarget) - totalDistance
-        val progressPercentage = ((totalDistance / totalTarget) * 100).toInt()
+        // Update the total distance in the shared preferences
+        editor.putFloat("total_distance", totalDistance)
+        editor.apply()
 
+        // Calculate the progress
+        val totalTarget = 5000.0
+        val remainingDistance = convertMeterToKm(totalTarget) - totalDistance
+        Log.d("HomeActivity", "Remaining distance: $remainingDistance")
+        val progressPercentage = ((totalDistance / convertMeterToKm(totalTarget)) * 100).toInt()
+        Log.d("HomeActivity", "Progress percentage: $progressPercentage")
         progressBar.progress = progressPercentage
         weeklyGoalText.text = DecimalFormat("0.###").format(convertMeterToKm(totalTarget)) + " Km"
         weeklyGoalProgressText.text = DecimalFormat("0.###").format(totalDistance) + " Km"
