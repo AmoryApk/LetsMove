@@ -26,7 +26,7 @@
                  You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <activity
-            android:name=".authentication.MainActivity"
+            android:name=".authentication.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
@@ -34,6 +34,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".authentication.MainActivity" />
 
         <!-- Aktivitas Register -->
         <activity android:name=".authentication.RegisterActivity" />
@@ -50,7 +52,6 @@
         <!-- Aktivitas Maps -->
         <activity android:name=".activity.MapsActivity" />
 
-        <activity android:name=".profile.AchievementsActivity" />
         <activity android:name=".profile.SettingsActivity" />
         <activity android:name=".profile.AboutUsActivity" />
 

@@ -185,9 +185,7 @@ class ProfilePage : AppCompatActivity() {
     }
 
     private fun setupMenuClickListeners() {
-        findViewById<View>(R.id.achievementsMenu).setOnClickListener {
-            navigateToActivity(AchievementsActivity::class.java)
-        }
+
         findViewById<View>(R.id.settingsMenu).setOnClickListener {
             navigateToActivity(SettingsActivity::class.java)
         }

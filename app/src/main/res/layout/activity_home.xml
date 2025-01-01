@@ -51,14 +51,6 @@
                     android:textSize="14sp"/>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/settingsButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_settings"
-                android:contentDescription="Settings"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_gravity="center_vertical" />
         </LinearLayout>
 
         <!-- Weekly Goal Card -->
@@ -83,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Week goal"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/holo_blue_light"
                     android:textSize="14sp"/>
 
                 <TextView
@@ -100,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="35 km done"
-                    android:textColor="@android:color/white"
+                    android:textColor="#18D7C1"
                     android:textSize="12sp"/>
 
                 <ProgressBar
@@ -116,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="15 km left"
-                    android:textColor="@android:color/white"
+                    android:textColor="#18D7C1"
                     android:textSize="12sp"
                     android:gravity="end"/>
             </LinearLayout>
@@ -158,7 +150,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Current jogging"
-                        android:textColor="@android:color/white"
+                        android:textColor="#18D7C1"
                         android:textSize="14sp"/>
 
                     <TextView
@@ -174,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="133 kcal"
-                    android:textColor="@android:color/white"
+                    android:textColor="#18D7C1"
                     android:textSize="12sp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -227,15 +219,14 @@
         <!-- Bottom Navigation -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
+            android:layout_width="408dp"
+            android:layout_height="57dp"
             app:itemIconTint="@color/navigation_item_color"
             app:itemTextColor="@color/navigation_item_color"
-            app:menu="@menu/bottom_navigation_menu"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:menu="@menu/bottom_navigation_menu" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

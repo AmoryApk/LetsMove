@@ -4,30 +4,36 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="#FFFFFF">
 
         <!-- Logo -->
+
+        <!-- Success Message -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_foreground"
+            android:layout_marginTop="140dp"
             android:contentDescription="Logo"
-            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/logo2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Success Message -->
         <TextView
             android:id="@+id/successMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="188dp"
             android:text="You have been signed in successfully."
-            android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@id/logo"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/black"
+            android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Continue Button -->
         <Button
@@ -39,6 +45,8 @@
             app:layout_constraintTop_toBottomOf="@id/successMessage"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/rounded_button_black"
+            android:textColor="#FFFFFF"
             android:layout_marginTop="16dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
