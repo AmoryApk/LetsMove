@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RUNApps</string>
+    <string name="app_name">LetsMove</string>
 <!--    <string name="app_name">RunTracker</string>-->
     <string name="title_activity_maps">Map</string>
     <string name="average_pace_label">Steps</string>

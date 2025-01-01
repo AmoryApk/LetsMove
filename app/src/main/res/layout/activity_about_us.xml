@@ -1,13 +1,82 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="#000000"
+    android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="About Us Page"
-        android:textSize="18sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="120dp"
+            android:layout_height="116dp"
+            android:layout_gravity="center"
+            android:contentDescription="Logo"
+            android:src="@drawable/logo1" />
+
+        <!-- Title -->
+
+        <!-- About Us Section -->
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:text="LETS MOVE"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/aboutUsHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="About Us"
+            android:textSize="24sp"
+            android:textStyle="bold|italic"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="24dp"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/aboutUsContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Welcome to Let's Move, your ultimate running companion!\nAt Let's Move, our mission is to empower runners of all levels to achieve their fitness goals through innovation, motivation, and community. Whether you're a seasoned marathoner, a casual jogger, or just starting your fitness journey, our app is designed to help you track, analyze, and improve every step of the way."
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp"
+            android:gravity="start" />
+
+        <!-- Who We Are Section -->
+        <TextView
+            android:id="@+id/whoWeAreHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Who We Are"
+            android:textSize="24sp"
+            android:textStyle="bold|italic"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="24dp"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/whoWeAreContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="We are a passionate team of runners, fitness enthusiasts, and tech innovators committed to revolutionizing the way people run and stay active. Our goal is to combine cutting-edge technology with intuitive design to create an app that not only tracks your runs but also inspires you to keep moving forward."
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:gravity="start" />
+    </LinearLayout>
+</ScrollView>
