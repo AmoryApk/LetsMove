@@ -4,33 +4,44 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.runapps.R
-import com.example.runapps.authentication.LoginActivity
+import com.example.runapps.authentication.MainActivity
+import com.example.runapps.authentication.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.example.runapps.starter.StarterService.loadProfileImage
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var editProfileName: EditText
-    private lateinit var saveNameButton: Button
+    private lateinit var usernameField: EditText
     private lateinit var logoutButton: Button
+    private lateinit var deleteAccountButton: Button
+    private lateinit var profileName: TextView
+    private lateinit var profileImage: ImageView // Declare the ImageView
+    private lateinit var cancelButton: TextView
+    private lateinit var saveButton: TextView
+    private lateinit var emailField: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         initializeViews()
         loadExistingProfileName()
-        setupSaveNameButton()
-        setupLogoutButton()
+        setupListeners()
     }
 
     private fun initializeViews() {
-        editProfileName = findViewById(R.id.editProfileName)
-        saveNameButton = findViewById(R.id.saveNameButton)
+        usernameField = findViewById(R.id.usernameField)
         logoutButton = findViewById(R.id.logoutButton)
+        deleteAccountButton = findViewById(R.id.deleteAccountButton)
+        profileName = findViewById(R.id.profileName)
+        profileImage = findViewById(R.id.profileImage)
+        cancelButton = findViewById(R.id.cancelButton)
+        saveButton = findViewById(R.id.saveButton)
+        emailField = findViewById(R.id.emailField)
+
+        loadProfileImage(profileImage)
     }
 
     private fun loadExistingProfileName() {
@@ -38,25 +49,32 @@ class SettingsActivity : AppCompatActivity() {
         val currentName = sharedPreferences.getString("profileName", null)
             ?: FirebaseAuth.getInstance().currentUser?.email?.substringBefore("@")
             ?: "User"
-        editProfileName.setText(currentName)
+        profileName.text = currentName
+        usernameField.setText(currentName)
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        emailField.setText(currentUser?.email ?: "No email available")
     }
 
-    private fun setupSaveNameButton() {
-        saveNameButton.setOnClickListener {
-            val newName = editProfileName.text.toString().trim()
-            if (newName.isNotEmpty()) {
-                saveProfileName(newName)
-            } else {
-                editProfileName.error = "Name cannot be empty"
-            }
+    private fun setupListeners() {
+        saveButton.setOnClickListener { saveProfileName() }
+        cancelButton.setOnClickListener { finish() }
+        logoutButton.setOnClickListener { logoutUser() }
+        deleteAccountButton.setOnClickListener { deleteAccount() }
+    }
+
+    private fun saveProfileName() {
+        val newName = usernameField.text.toString().trim()
+        if (newName.isEmpty()) {
+            usernameField.error = "Name cannot be empty"
+            return
         }
-    }
 
-    private fun saveProfileName(newName: String) {
         val sharedPreferences = getSharedPreferences("ProfilePrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("profileName", newName)
         editor.apply()
+
         saveUsernameToDatabase(newName)
     }
 
@@ -65,27 +83,13 @@ class SettingsActivity : AppCompatActivity() {
         val databaseReference = FirebaseDatabase.getInstance().reference.child("users").child(uid!!)
         databaseReference.child("username").setValue(username)
             .addOnSuccessListener {
-                showProfileNameUpdatedMessage()
-                finish()
+                Toast.makeText(this, "Profile name updated", Toast.LENGTH_SHORT).show()
+                profileName.text = username
             }
             .addOnFailureListener { exception ->
                 Log.e("SettingsActivity", "Error saving username to database", exception)
-                showProfileNameUpdateFailedMessage()
+                Toast.makeText(this, "Failed to update profile name", Toast.LENGTH_SHORT).show()
             }
-    }
-
-    private fun showProfileNameUpdatedMessage() {
-        Toast.makeText(this, "Profile name updated", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showProfileNameUpdateFailedMessage() {
-        Toast.makeText(this, "Failed to update profile name", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun setupLogoutButton() {
-        logoutButton.setOnClickListener {
-            logoutUser()
-        }
     }
 
     private fun logoutUser() {
@@ -93,17 +97,44 @@ class SettingsActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         editor.clear()
         editor.apply()
-        showLogoutMessage()
-        redirectToIntroPage()
-    }
 
-    private fun showLogoutMessage() {
+        val userPrefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val userEditor = userPrefs.edit()
+        userEditor.putBoolean("isLoggedIn", false)
+        userEditor.apply()
+
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun redirectToIntroPage() {
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
+
+    private fun deleteAccount() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        currentUser?.delete()
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Clear shared preferences after account deletion
+                    val sharedPreferences = getSharedPreferences("ProfilePrefs", Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.clear()
+                    editor.apply()
+
+                    // Logout the user and reinitialize FirebaseAuth
+                    FirebaseAuth.getInstance().signOut()
+
+                    Toast.makeText(this, "Account deleted successfully", Toast.LENGTH_SHORT).show()
+
+                    // Navigate to MainActivity after account is deleted
+                    val intent = Intent(this,  SplashActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()  // Close SettingsActivity to prevent back navigation
+                } else {
+                    Toast.makeText(this, "Failed to delete account", Toast.LENGTH_SHORT).show()
+                    Log.e("SettingsActivity", "Error deleting account", task.exception)
+                }
+            }
+    }
+
 }
